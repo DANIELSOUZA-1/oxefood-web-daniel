@@ -1,6 +1,7 @@
 import React from "react";
 import InputMask from 'react-input-mask';
 import { Button, Container, Divider, Form, Icon } from 'semantic-ui-react';
+import MenuSistema from "../../MenuSistema";
 
 export default function FormEntregador() {
 
@@ -37,6 +38,7 @@ export default function FormEntregador() {
 
     return (
         <div>
+            <MenuSistema />
             <div style={{ marginTop: '3%' }}>
                 <Container textAlign='justified' >
                     <div className="flex gap-2 items-center text-3xl font-semibold">
