@@ -1,9 +1,98 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import InputMask from 'react-input-mask';
 import { Button, Container, Divider, Form, Icon } from 'semantic-ui-react';
 import MenuSistema from "../../MenuSistema";
+import axios from "axios";
+import { useLocation } from "react-router-dom";
 
 export default function FormEntregador() {
+
+    const [nome, setNome] = useState();
+    const [cpf, setCpf] = useState();
+    const [dataNascimento, setDataNascimento] = useState();
+    const [foneCelular, setFoneCelular] = useState();
+    const [foneFixo, setFoneFixo] = useState();
+    const [qtdEntregasRealizadas, setQtdEntregasRealizadas] = useState();
+
+    const [rua, setRua] = useState();
+    const [numero, setNumero] = useState();
+    const [bairro, setBairro] = useState();
+    const [cidade, setCidade] = useState();
+    const [cep, setCep] = useState();
+    const [uf, setUf] = useState();
+    const [complemento, setComplemento] = useState();
+
+    const [idEntregador, setIdEntregador] = useState();
+    const { state } = useLocation();
+
+    useEffect(() => {
+        debugger
+        console.log(state.id)
+        if (state != null && state.id != null) {
+            axios.get("http://localhost:8080/api/entregador/" + state.id)
+                .then((response) => {
+                    setIdEntregador(response.data.id)
+                    setNome(response.data.nome)
+                    setCpf(response.data.cpf)
+                    setDataNascimento(formatarData(response.data.dataNascimento))
+                    setFoneCelular(response.data.foneCelular)
+                    setFoneFixo(response.data.foneFixo)
+
+                    setQtdEntregasRealizadas(response.data.setQtdEntregasRealizadas)
+                    setRua(response.data.rua)
+                    setNumero(response.data.numero)
+                    setBairro(response.data.bairro)
+                    setCidade(response.data.cidade)
+                    setCep(response.data.cep)
+                    setUf(response.data.uf)
+                    setComplemento(response.data.complemento)
+                })
+        }
+    }, [state])
+
+    function formatarData(dataParam) {
+
+        if (dataParam === null || dataParam === '' || dataParam === undefined) {
+            return ''
+        }
+
+        let arrayData = dataParam.split('-')
+
+        return arrayData[2] + '/' + arrayData[1] + '/' + arrayData[0]
+
+    }
+
+    function salvar() {
+        let entregadorRequest = {
+            nome: nome,
+            cpf: cpf,
+            dataNascimento: dataNascimento,
+            foneCelular: foneCelular,
+            foneFixo: foneFixo,
+            qtdEntregasRealizadas: qtdEntregasRealizadas,
+            rua: rua,
+            numero: numero,
+            bairro: bairro,
+            cidade: cidade,
+            cep: cep,
+            uf: uf,
+            complemento: complemento
+        }
+
+
+        if (idEntregador != null) { //Alteração:
+            axios.put("http://localhost:8080/api/entregador/" + idEntregador, entregadorRequest)
+                .then((response) => { console.log('entregador alterado com sucesso.') })
+                .catch((error) => { console.log('Erro ao alter um cliente.') })
+
+        } else { //Cadastro:
+            axios.post("http://localhost:8080/api/entregador", entregadorRequest)
+                .then((response) => { console.log('entregador cadastrado com sucesso.') })
+                .catch((error) => { console.log('Erro ao incluir o cliente.') })
+        }
+
+    }
+
 
     const options = [
         { key: 'ac', text: "Acre", value: "AC" },
@@ -55,6 +144,8 @@ export default function FormEntregador() {
                                     label='Nome'
                                     maxLength="100"
                                     width={10}
+                                    value={nome}
+                                    onChange={e => setNome(e.target.value)}
                                 />
                                 <Form.Input
                                     required
@@ -62,6 +153,8 @@ export default function FormEntregador() {
                                     label='CPF'
                                     maxLength="100"
                                     width={5}
+                                    value={cpf}
+                                    onChange={e => setCpf(e.target.value)}
                                 />
                                 <Form.Input
                                     required
@@ -69,6 +162,8 @@ export default function FormEntregador() {
                                     label='RG'
                                     maxLength="100"
                                     width={5}
+                                    value={cpf}
+                                    onChange={e => setCpf(e.target.value)}
                                 />
                             </Form.Group>
                             <Form.Group widths='equal'>
@@ -77,6 +172,8 @@ export default function FormEntregador() {
                                     label='DT Nascimento'
                                     maxLength="100"
                                     width={3.6}
+                                    value={dataNascimento}
+                                    onChange={e => setDataNascimento(e.target.value)}
                                 />
                                 <Form.Input
                                     required
@@ -84,12 +181,16 @@ export default function FormEntregador() {
                                     label='Fone Celular'
                                     maxLength="100"
                                     width={3.6}
+                                    value={foneCelular}
+                                    onChange={e => setFoneCelular(e.target.value)}
                                 />
                                 <Form.Input
                                     fluid
                                     label='Fone Fixo'
                                     maxLength="100"
                                     width={3.6}
+                                    value={foneFixo}
+                                    onChange={e => setFoneFixo(e.target.value)}
                                 />
                                 <Form.Input
                                     required
@@ -97,6 +198,8 @@ export default function FormEntregador() {
                                     label='QTD Entregas Realizadas'
                                     maxLength="100"
                                     width={3.6}
+                                    value={qtdEntregasRealizadas}
+                                    onChange={e => setQtdEntregasRealizadas(e.target.value)}
                                 />
                                 <Form.Input
                                     required
@@ -104,6 +207,9 @@ export default function FormEntregador() {
                                     label='Valor Por Frete'
                                     maxLength="100"
                                     width={3.6}
+                                    value={qtdEntregasRealizadas}
+                                    onChange={e => setQtdEntregasRealizadas(e.target.value)}
+
                                 />
                             </Form.Group>
                             <Form.Group widths='equal'>
@@ -112,12 +218,16 @@ export default function FormEntregador() {
                                     label='Rua'
                                     maxLength="100"
                                     width={14}
+                                    value={rua}
+                                    onChange={e => setRua(e.target.value)}
                                 />
                                 <Form.Input
                                     fluid
                                     label='Número'
                                     maxLength="100"
                                     width={4}
+                                    value={numero}
+                                    onChange={e => setNumero(e.target.value)}
                                 />
                             </Form.Group>
                             <Form.Group widths='equal'>
@@ -126,18 +236,24 @@ export default function FormEntregador() {
                                     label='Bairro'
                                     maxLength="100"
                                     width={7}
+                                    value={bairro}
+                                    onChange={e => setBairro(e.target.value)}
                                 />
                                 <Form.Input
                                     fluid
                                     label='Cidade'
                                     maxLength="100"
                                     width={7}
+                                    value={cidade}
+                                    onChange={e => setCidade(e.target.value)}
                                 />
                                 <Form.Input
                                     fluid
                                     label='CEP'
                                     maxLength="100"
                                     width={4}
+                                    value={cep}
+                                    onChange={e => setCep(e.target.value)}
                                 />
                             </Form.Group>
 
@@ -148,14 +264,18 @@ export default function FormEntregador() {
                                     options={options}
                                     value=''
                                     placeholder='Selecione'
+                                    onChange={e => setUf(e.target.value)}
                                 />
                             </Form.Group>
 
-                            <Form.Group widths='equal'>
+                            <Form.Group widths='equal'>value={rua}
+                                onChange={e => setRua(e.target.value)}
                                 <Form.Input
                                     fluid
                                     label='Complemento'
                                     maxLength="100"
+                                    value={complemento}
+                                    onChange={e => setComplemento(e.target.value)}
                                 />
                             </Form.Group>
                             <Form.Group inline>
@@ -191,6 +311,7 @@ export default function FormEntregador() {
                                 labelPosition='left'
                                 color='blue'
                                 floated='right'
+                                onClick={() => salvar()}
                             >
                                 <Icon name='save' />
                                 Salvar

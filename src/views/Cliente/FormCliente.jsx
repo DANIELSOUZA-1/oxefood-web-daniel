@@ -1,17 +1,48 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import InputMask from 'react-input-mask';
 import { Button, Container, Divider, Form, Icon } from 'semantic-ui-react';
 import MenuSistema from "../../MenuSistema";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 export default function FormCliente() {
 
+    
+    
     const [nome, setNome] = useState();
     const [cpf, setCpf] = useState();
     const [dataNascimento, setDataNascimento] = useState();
     const [foneCelular, setFoneCelular] = useState();
     const [foneFixo, setFoneFixo] = useState();
+    
+    const [idCliente, setIdCliente] = useState();
+    const { state } = useLocation();
+    useEffect(() => {
+        if (state != null && state.id != null) {
+            axios.get("http://localhost:8080/api/cliente/" + state.id)
+                .then((response) => {
+                    setIdCliente(response.data.id)
+                    setNome(response.data.nome)
+                    setCpf(response.data.cpf)
+                    setDataNascimento(formatarData(response.data.dataNascimento))
+                    setFoneCelular(response.data.foneCelular)
+                    setFoneFixo(response.data.foneFixo)
+                })
+        }
+    }, [state])
+
+    function formatarData(dataParam) {
+
+        if (dataParam === null || dataParam === '' || dataParam === undefined) {
+            return ''
+        }
+
+        let arrayData = dataParam.split('-')
+
+        return arrayData[2] + '/' + arrayData[1] + '/' + arrayData[0]
+
+    }
+
 
     function salvar() {
         let clienteRequest = {
@@ -22,13 +53,16 @@ export default function FormCliente() {
             foneFixo: foneFixo
         }
 
-        axios.post("http://localhost:8080/api/cliente", clienteRequest)
-            .then((response) => {
-                console.log('Cliente cadastrado com sucesso.')
-            })
-            .catch((error) => {
-                console.log('Erro ao incluir o um cliente.')
-            })
+        if (idCliente != null) { //Alteração:
+            axios.put("http://localhost:8082/api/cliente/" + idCliente, clienteRequest)
+                .then((response) => { console.log('Cliente alterado com sucesso.') })
+                .catch((error) => { console.log('Erro ao alter um cliente.') })
+
+        } else { //Cadastro:
+            axios.post("http://localhost:8082/api/cliente", clienteRequest)
+                .then((response) => { console.log('Cliente cadastrado com sucesso.') })
+                .catch((error) => { console.log('Erro ao incluir o cliente.') })
+        }
 
     }
 
@@ -38,8 +72,21 @@ export default function FormCliente() {
             <div style={{ marginTop: '3%' }}>
                 <Container textAlign='justified' >
                     <div className="flex gap-2 items-center text-3xl font-semibold">
-                        <span className="text-gray-400">Entregador <span className="-mr-1 text-2xl font-bold">{'>'}</span><span className="text-2xl font-bold">{'>'}</span></span>
-                        <span className="mr-1">Cadastro</span>
+
+
+                        {idCliente === undefined &&
+                            <div>
+                                <span className="text-gray-400">Cliente <span className="-mr-1 text-2xl font-bold">{'>'}</span><span className="text-2xl font-bold">{'>'}</span></span>
+                                <span className="mr-1">Cadastro</span>
+                            </div>
+                        }
+                        {idCliente != undefined &&
+                            <div>
+                                <span className="text-gray-400">Cliente <span className="-mr-1 text-2xl font-bold">{'>'}</span><span className="text-2xl font-bold">{'>'}</span></span>
+                                <span className="mr-1">Alterar</span>
+                            </div>
+                        }
+
                     </div>
                     <Divider />
                     <div style={{ marginTop: '4%' }}>
@@ -113,7 +160,6 @@ export default function FormCliente() {
                             >
                                 <Icon name='reply' />
                                 <Link to={'/list-cliente'}>Voltar</Link>
-                                Voltar
                             </Button>
                             <Button
                                 inverted

@@ -51,7 +51,7 @@ export default function FormProduto () {
                                 </Form.Input>
                                 <Form.Input
                                     fluid
-                                    label='Tempo de Entrega Mínima em Minutos'
+                                    label='Tempo de Entrega Máxima em Minutos'
                                     placeholder='40'
                                     width={6}>
                                 </Form.Input>
