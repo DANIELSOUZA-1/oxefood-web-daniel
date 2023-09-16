@@ -262,14 +262,13 @@ export default function FormEntregador() {
                                     fluid
                                     label='UF'
                                     options={options}
-                                    value=''
+                                    defaultValue={uf}
                                     placeholder='Selecione'
                                     onChange={e => setUf(e.target.value)}
                                 />
                             </Form.Group>
 
-                            <Form.Group widths='equal'>value={rua}
-                                onChange={e => setRua(e.target.value)}
+                            <Form.Group widths='equal'>
                                 <Form.Input
                                     fluid
                                     label='Complemento'
