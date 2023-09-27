@@ -56,9 +56,9 @@ export default function FormEntregador() {
             return ''
         }
 
-        let arrayData = dataParam.split('-')
+        //let arrayData = dataParam.split('-')
 
-        return arrayData[2] + '/' + arrayData[1] + '/' + arrayData[0]
+        return dataParam[2] + '/' + dataParam[1] + '/' + dataParam[0]
 
     }
 

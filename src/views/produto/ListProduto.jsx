@@ -4,21 +4,21 @@ import { Link } from "react-router-dom";
 import { Button, Container, Divider, Header, Icon, Modal, Table } from 'semantic-ui-react';
 import MenuSistema from '../../MenuSistema';
 
-export default function ListEntregador() {
+export default function ListProduto() {
 
-    const [lista, setLista] = useState([]);
     const [openModal, setOpenModal] = useState(false);
     const [idRemover, setIdRemover] = useState();
 
+
+    const [lista, setLista] = useState([]);
 
     useEffect(() => {
         carregarLista();
     }, [])
 
     function carregarLista() {
-        axios.get("http://localhost:8080/api/entregador")
+        axios.get("http://localhost:8080/api/produto")
             .then((response) => {
-                console.log(response)
                 setLista(response.data)
             })
     }
@@ -28,15 +28,9 @@ export default function ListEntregador() {
             return ''
         }
 
-        //let arrayData = dataParam.split('-')
+        // let arrayData = dataParam.split('-')
 
         return dataParam[2] + '/' + dataParam[1] + '/' + dataParam[0]
-
-    }
-
-    function formatarEndereco(endereco) {
-
-        return `numero ${endereco.numero}, ${endereco.rua}, ${endereco.bairro}, ${endereco.cidede}, ${endereco.cep}, ${endereco.uf}, ${endereco.complemento} `
 
     }
 
@@ -47,21 +41,22 @@ export default function ListEntregador() {
 
     async function remover() {
 
-        await axios.delete('http://localhost:8080/api/entregador/' + idRemover)
+        await axios.delete('http://localhost:8080/api/produto/' + idRemover)
         .then((response) => {
-  
-            console.log('Cliente removido com sucesso.')
-  
-            axios.get("http://localhost:8080/api/entregador")
+   
+            console.log('Produto removido com sucesso.')
+   
+            axios.get('http://localhost:8080/api/produto')
             .then((response) => {
                 setLista(response.data)
             })
         })
         .catch((error) => {
-            console.log('Erro ao remover um entregador.')
+            console.log('Erro ao remover um produto.')
         })
+ 
         setOpenModal(false)
-    }
+ }
  
 
 
@@ -72,7 +67,7 @@ export default function ListEntregador() {
 
                 <Container textAlign='justified' >
 
-                    <h2> Entregador </h2>
+                    <h2> Produto </h2>
                     <Divider />
 
                     <div style={{ marginTop: '4%' }}>
@@ -83,7 +78,7 @@ export default function ListEntregador() {
                             icon='clipboard outline'
                             floated='right'
                             as={Link}
-                            to='/form-entregador'
+                            to='/form-produto'
                         />
                         <br /><br /><br />
 
@@ -91,55 +86,46 @@ export default function ListEntregador() {
 
                             <Table.Header>
                                 <Table.Row>
-                                    <Table.HeaderCell>Nome</Table.HeaderCell>
-                                    <Table.HeaderCell>Data de Nascimento</Table.HeaderCell>
-                                    <Table.HeaderCell>Fone</Table.HeaderCell>
-
-                                    <Table.HeaderCell>Endereço</Table.HeaderCell>
-                                    <Table.HeaderCell>qtd Entregas Realizadas</Table.HeaderCell>
+                                    <Table.HeaderCell>Código</Table.HeaderCell>
+                                    <Table.HeaderCell>Categoria</Table.HeaderCell>
+                                    <Table.HeaderCell>Titulo</Table.HeaderCell>
+                                    <Table.HeaderCell>Descrição</Table.HeaderCell>
+                                    <Table.HeaderCell>Valor Unitário</Table.HeaderCell>
+                                    <Table.HeaderCell>Tempo Mínimo de Entrega</Table.HeaderCell>
+                                    <Table.HeaderCell>Tempo Máximo de Entrega</Table.HeaderCell>
                                     <Table.HeaderCell textAlign='center'>Ações</Table.HeaderCell>
                                 </Table.Row>
                             </Table.Header>
 
                             <Table.Body>
 
-                                {lista.map(entregador => (
+                                {lista.map(produto => (
 
-                                    <Table.Row key={entregador.id}>
-                                        <Table.Cell>{entregador.nome}<br />{entregador.cpf}</Table.Cell>
-                                        <Table.Cell>{formatarData(entregador.dataNascimento)}</Table.Cell>
-                                        <Table.Cell>{entregador.foneCelular}<br />{entregador.foneFixo}</Table.Cell>
-                                        <Table.Cell>{formatarEndereco(
-                                            {
-                                                rua: entregador.rua,
-                                                numero: entregador.numero,
-                                                bairro: entregador.bairro,
-                                                cidade: entregador.cidade,
-                                                cep: entregador.cep,
-                                                uf: entregador.uf,
-                                                complemento: entregador.complemento,
-                                            }
-                                        )}</Table.Cell>
-                                        <Table.Cell>{entregador.qtdEntregasRealizadas}</Table.Cell>
-
+                                    <Table.Row key={produto.id}>
+                                        <Table.Cell>{produto.codProduto}</Table.Cell>
+                                        <Table.Cell>{produto.categoria}</Table.Cell>
+                                        <Table.Cell>{produto.titulo}</Table.Cell>
+                                        <Table.Cell>{produto.descricao}</Table.Cell>
+                                        <Table.Cell>{produto.valorUnitario}</Table.Cell>
+                                        <Table.Cell>{produto.tempoEntregaMinima}</Table.Cell>
+                                        <Table.Cell>{produto.tempoEntregaMaxima}</Table.Cell>
                                         <Table.Cell textAlign='center'>
 
                                             <Button
                                                 inverted
                                                 circular
                                                 color='green'
-                                                title='Clique aqui para editar os dados deste entregador'
+                                                title='Clique aqui para editar os dados deste produto'
                                                 icon>
-                                                <Icon name='edit' />
-                                                <Link to="/form-entregador" state={{ id: entregador.id }} style={{ color: 'green' }}> <Icon name='edit' /> </Link>
+                                                <Link to="/form-produto" state={{ id: produto.id }} style={{ color: 'green' }}> <Icon name='edit' /> </Link>
                                             </Button> &nbsp;
                                             <Button
                                                 inverted
                                                 circular
                                                 color='red'
-                                                title='Clique aqui para remover este entregador'
-                                                onClick={e => confirmaRemover(entregador.id)}
-                                                icon>
+                                                title='Clique aqui para remover este produto'
+                                                icon
+                                                onClick={e => confirmaRemover(produto.id)}>
                                                 <Icon name='trash' />
                                             </Button>
 
