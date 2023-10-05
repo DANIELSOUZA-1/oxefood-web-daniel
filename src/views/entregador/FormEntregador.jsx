@@ -4,6 +4,8 @@ import { Button, Container, Divider, Form, Icon } from 'semantic-ui-react';
 import MenuSistema from "../../MenuSistema";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
+import { notifyError, notifySuccess } from '../utils/utils';
+
 
 export default function FormEntregador() {
 
@@ -82,13 +84,13 @@ export default function FormEntregador() {
 
         if (idEntregador != null) { //Alteração:
             axios.put("http://localhost:8080/api/entregador/" + idEntregador, entregadorRequest)
-                .then((response) => { console.log('entregador alterado com sucesso.') })
-                .catch((error) => { console.log('Erro ao alter um cliente.') })
+                .then((response) => { notifySuccess('entregador alterado com sucesso.') })
+                .catch((error) => { notifyError('Erro ao alter um cliente.') })
 
         } else { //Cadastro:
             axios.post("http://localhost:8080/api/entregador", entregadorRequest)
-                .then((response) => { console.log('entregador cadastrado com sucesso.') })
-                .catch((error) => { console.log('Erro ao incluir o cliente.') })
+                .then((response) => { notifySuccess('entregador cadastrado com sucesso.') })
+                .catch((error) => { notifyError('Erro ao incluir o cliente.') })
         }
 
     }

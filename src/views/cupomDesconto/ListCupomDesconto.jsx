@@ -6,7 +6,7 @@ import MenuSistema from '../../MenuSistema';
 import { notifyError, notifySuccess } from '../utils/utils';
 
 
-export default function ListCliente() {
+export default function ListCupomDesconto() {
 
     const [openModal, setOpenModal] = useState(false);
     const [idRemover, setIdRemover] = useState();
@@ -19,7 +19,7 @@ export default function ListCliente() {
     }, [])
 
     function carregarLista() {
-        axios.get("http://localhost:8080/api/cliente")
+        axios.get("http://localhost:8080/api/cupom_desconto")
             .then((response) => {
                 setLista(response.data)
             })
@@ -43,18 +43,18 @@ export default function ListCliente() {
 
     async function remover() {
 
-        await axios.delete('http://localhost:8080/api/cliente/' + idRemover)
+        await axios.delete('http://localhost:8080/api/cupom_desconto/' + idRemover)
         .then((response) => {
    
-            notifySuccess('Cliente removido com sucesso.')
+            notifySuccess('CupomDesconto removido com sucesso.')
    
-            axios.get('http://localhost:8080/api/cliente')
+            axios.get('http://localhost:8080/api/cupom_desconto')
             .then((response) => {
                 setLista(response.data)
             })
         })
         .catch((error) => {
-            notifyError('Erro ao remover um cliente.')
+            notifyError('Erro ao remover um cupom_desconto.')
         })
  
         setOpenModal(false)
@@ -69,7 +69,7 @@ export default function ListCliente() {
 
                 <Container textAlign='justified' >
 
-                    <h2> Cliente </h2>
+                    <h2> CupomDesconto </h2>
                     <Divider />
 
                     <div style={{ marginTop: '4%' }}>
@@ -80,7 +80,7 @@ export default function ListCliente() {
                             icon='clipboard outline'
                             floated='right'
                             as={Link}
-                            to='/form-cliente'
+                            to='/form-cupom_desconto'
                         />
                         <br /><br /><br />
 
@@ -88,42 +88,46 @@ export default function ListCliente() {
 
                             <Table.Header>
                                 <Table.Row>
-                                    <Table.HeaderCell>Nome</Table.HeaderCell>
-                                    <Table.HeaderCell>CPF</Table.HeaderCell>
-                                    <Table.HeaderCell>Data de Nascimento</Table.HeaderCell>
-                                    <Table.HeaderCell>Fone Celular</Table.HeaderCell>
-                                    <Table.HeaderCell>Fone Fixo</Table.HeaderCell>
+                                    <Table.HeaderCell>Código</Table.HeaderCell>
+                                    <Table.HeaderCell>Percentual</Table.HeaderCell>
+                                    <Table.HeaderCell>Valor</Table.HeaderCell>
+                                    <Table.HeaderCell>Valor Minimo</Table.HeaderCell>
+                                    <Table.HeaderCell>Qtd Maxima Uso</Table.HeaderCell>
+                                    <Table.HeaderCell>Inicio</Table.HeaderCell>
+                                    <Table.HeaderCell>Fim</Table.HeaderCell>
                                     <Table.HeaderCell textAlign='center'>Ações</Table.HeaderCell>
                                 </Table.Row>
                             </Table.Header>
 
                             <Table.Body>
 
-                                {lista.map(cliente => (
+                                {lista.map(cupom_desconto => (
 
-                                    <Table.Row key={cliente.id}>
-                                        <Table.Cell>{cliente.nome}</Table.Cell>
-                                        <Table.Cell>{cliente.cpf}</Table.Cell>
-                                        <Table.Cell>{formatarData(cliente.dataNascimento)}</Table.Cell>
-                                        <Table.Cell>{cliente.foneCelular}</Table.Cell>
-                                        <Table.Cell>{cliente.foneFixo}</Table.Cell>
+                                    <Table.Row key={cupom_desconto.id}>
+                                        <Table.Cell>{cupom_desconto.codDesconto}</Table.Cell>
+                                        <Table.Cell>{cupom_desconto.percentualDesconto}</Table.Cell>
+                                        <Table.Cell>{cupom_desconto.valorDesconto}</Table.Cell>
+                                        <Table.Cell>{cupom_desconto.valorMinimoPedidoPermitido}</Table.Cell>
+                                        <Table.Cell>{cupom_desconto.quantidadeMaximaUso}</Table.Cell>
+                                        <Table.Cell>{cupom_desconto.inicioVigencia}</Table.Cell>
+                                        <Table.Cell>{cupom_desconto.fimVigencia}</Table.Cell>
                                         <Table.Cell textAlign='center'>
 
                                             <Button
                                                 inverted
                                                 circular
                                                 color='green'
-                                                title='Clique aqui para editar os dados deste cliente'
+                                                title='Clique aqui para editar os dados deste cupom_desconto'
                                                 icon>
-                                                <Link to="/form-cliente" state={{ id: cliente.id }} style={{ color: 'green' }}> <Icon name='edit' /> </Link>
+                                                <Link to="/form-cupom_desconto" state={{ id: cupom_desconto.id }} style={{ color: 'green' }}> <Icon name='edit' /> </Link>
                                             </Button> &nbsp;
                                             <Button
                                                 inverted
                                                 circular
                                                 color='red'
-                                                title='Clique aqui para remover este cliente'
+                                                title='Clique aqui para remover este cupom_desconto'
                                                 icon
-                                                onClick={e => confirmaRemover(cliente.id)}>
+                                                onClick={e => confirmaRemover(cupom_desconto.id)}>
                                                 <Icon name='trash' />
                                             </Button>
 

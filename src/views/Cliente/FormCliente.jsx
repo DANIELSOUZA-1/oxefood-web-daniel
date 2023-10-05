@@ -5,6 +5,9 @@ import MenuSistema from "../../MenuSistema";
 import axios from "axios";
 import { Link, useLocation } from "react-router-dom";
 
+import {notifyError, notifySuccess } from '../utils/utils';
+
+
 export default function FormCliente() {
 
     
@@ -18,6 +21,7 @@ export default function FormCliente() {
     const [idCliente, setIdCliente] = useState();
     const { state } = useLocation();
     useEffect(() => {
+        console.log(Date.now())
         if (state != null && state.id != null) {
             axios.get("http://localhost:8080/api/cliente/" + state.id)
                 .then((response) => {
@@ -56,13 +60,13 @@ export default function FormCliente() {
 
         if (idCliente != null) { //Alteração:
             axios.put("http://localhost:8080/api/cliente/" + idCliente, clienteRequest)
-                .then((response) => { console.log('Cliente alterado com sucesso.') })
-                .catch((error) => { console.log('Erro ao alter um cliente.') })
+                .then((response) => { notifySuccess("Cliente cadastrado com sucesso") })
+                .catch((error) => { notifyError("Não foi possível cadastrar o cliente") })
 
         } else { //Cadastro:
             axios.post("http://localhost:8080/api/cliente", clienteRequest)
-                .then((response) => { console.log('Cliente cadastrado com sucesso.') })
-                .catch((error) => { console.log('Erro ao incluir o cliente.') })
+                .then((response) => { notifySuccess("Cliente cadastrado com sucesso") })
+                .catch((error) => { notifyError('Erro ao incluir o cliente.') })
         }
 
     }

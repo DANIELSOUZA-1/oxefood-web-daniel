@@ -5,6 +5,9 @@ import MenuSistema from "../../MenuSistema";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
 
+import { notifyError, notifySuccess } from '../utils/utils';
+
+
 export default function FormProduto() {
     const { state } = useLocation();
     const [idProduto, setIdProduto] = useState();
@@ -16,7 +19,7 @@ export default function FormProduto() {
     const [tempoEntregaMaximo, setTempoEntregaMaximo] = useState();
 
     const [listaCategoria, setListaCategoria] = useState([]);
-    const [idCategoria, setIdCategoria] = useState();
+    const [categoria, setCategoria] = useState();
 
     useEffect(() => {
 
@@ -30,7 +33,7 @@ export default function FormProduto() {
                     setValorUnitario(response.data.valorUnitario)
                     setTempoEntregaMinimo(response.data.tempoEntregaMinimo)
                     setTempoEntregaMaximo(response.data.tempoEntregaMaximo)
-                    setIdCategoria(response.data.categoria.id)
+                    setCategoria(response.data.categoria.id)
                 })
         }
 
@@ -45,24 +48,26 @@ export default function FormProduto() {
 
     function salvar() {
 
+        debugger
+
         let produtoRequest = {
-            idCategoria: idCategoria,
-            codigo: codigo,
+            idCategoria: categoria,
+            codProduto: codigo,
             titulo: titulo,
             descricao: descricao,
             valorUnitario: valorUnitario,
             tempoEntregaMinimo: tempoEntregaMinimo,
             tempoEntregaMaximo: tempoEntregaMaximo
         }
- 
+
         if (idProduto != null) { //Alteração:
             axios.put("http://localhost:8080/api/produto/" + idProduto, produtoRequest)
-            .then((response) => { console.log('Produto alterado com sucesso.') })
-            .catch((error) => { console.log('Erro ao alterar um produto.') })
+                .then((response) => { notifySuccess('Produto alterado com sucesso.') })
+                .catch((error) => { notifyError('Erro ao alterar um produto.') })
         } else { //Cadastro:
             axios.post("http://localhost:8080/api/produto/", produtoRequest)
-            .then((response) => { console.log('Produto cadastrado com sucesso.') })
-            .catch((error) => { console.log('Erro ao incluir o produto.') })
+                .then((response) => { notifySuccess('Produto cadastrado com sucesso.') })
+                .catch((error) => { notifyError('Erro ao incluir o produto.') })
         }
     }
 
@@ -84,6 +89,8 @@ export default function FormProduto() {
                                     fluid
                                     label='Título'
                                     maxLength="100"
+                                    value={titulo}
+                                    onChange={e => setTitulo(e.target.value)}
                                 />
                                 <Form.Input
                                     required
@@ -92,6 +99,8 @@ export default function FormProduto() {
                                     placeholder='Informe o código do produto'>
                                     <InputMask
                                         required
+                                        value={codigo}
+                                        onChange={e => setCodigo(e.target.value)}
                                     />
                                 </Form.Input>
                             </Form.Group>
@@ -103,9 +112,9 @@ export default function FormProduto() {
                                     placeholder='Selecione'
                                     label='Categoria'
                                     options={listaCategoria}
-                                    value={idCategoria}
+                                    value={categoria}
                                     onChange={(e, { value }) => {
-                                        setIdCategoria(value)
+                                        setCategoria(value)
                                     }}
                                 />
 
@@ -116,20 +125,26 @@ export default function FormProduto() {
                                     fluid
                                     label='Valor unitário'
                                     required
-                                    width={6}>
+                                    width={6}
+                                    value={valorUnitario}
+                                    onChange={e => setValorUnitario(e.target.value)}>
                                 </Form.Input>
                                 <Form.Input
                                     fluid
                                     label='Tempo de Entrega Mínima em Minutos'
                                     placeholder='30'
-                                    width={6}>
+                                    width={6}
+                                    value={tempoEntregaMinimo}
+                                    onChange={e => setTempoEntregaMinimo(e.target.value)}>
 
                                 </Form.Input>
                                 <Form.Input
                                     fluid
                                     label='Tempo de Entrega Máxima em Minutos'
                                     placeholder='40'
-                                    width={6}>
+                                    width={6}
+                                    value={tempoEntregaMaximo}
+                                    onChange={e => setTempoEntregaMaximo(e.target.value)}>
                                 </Form.Input>
                             </Form.Group>
                         </Form>
@@ -152,6 +167,7 @@ export default function FormProduto() {
                                 labelPosition='left'
                                 color='blue'
                                 floated='right'
+                                onClick={() => salvar()}
                             >
                                 <Icon name='save' />
                                 Salvar

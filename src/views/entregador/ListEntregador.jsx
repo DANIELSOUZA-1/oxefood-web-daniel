@@ -4,6 +4,9 @@ import { Link } from "react-router-dom";
 import { Button, Container, Divider, Header, Icon, Modal, Table } from 'semantic-ui-react';
 import MenuSistema from '../../MenuSistema';
 
+import { notifyError, notifySuccess } from '../utils/utils';
+
+
 export default function ListEntregador() {
 
     const [lista, setLista] = useState([]);
@@ -50,7 +53,7 @@ export default function ListEntregador() {
         await axios.delete('http://localhost:8080/api/entregador/' + idRemover)
         .then((response) => {
   
-            console.log('Cliente removido com sucesso.')
+            notifySuccess('Cliente removido com sucesso.')
   
             axios.get("http://localhost:8080/api/entregador")
             .then((response) => {
@@ -58,7 +61,7 @@ export default function ListEntregador() {
             })
         })
         .catch((error) => {
-            console.log('Erro ao remover um entregador.')
+            notifyError('Erro ao remover um entregador.')
         })
         setOpenModal(false)
     }
